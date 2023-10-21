@@ -2,18 +2,23 @@
 
 По итогам тестирования были обнаружены следующие проблемы:  
 
-| № | Критичность | Название |
-|---|-------------|----------|
-| 1 | <font color="red">**Высокая**</font> | Уязвимости Denial of Service, Command Injection |
-| 2 | <font color="red">**Высокая**</font> | Уязвимость SQL Injection |
-| 3 | <font color="orange">**Средняя**</font> | Слабый пароль администратора |
-| 4 | <font color="orange">**Средняя**</font> | Использование чужой сессии |
-| 5 | <font color="orange">**Средняя**</font> | Уязвимость Path Traversal |
-| 6 | <font color="orange">**Средняя**</font> | Уязвимость к XSS атакам |
-| 7 | <font color="orange">**Средняя**</font> | Уязвимость к BruteForce атакам |
-| 8 | <font color="orange">**Средняя**</font> | Уязвимость к атакам типа Сlickjacking, XSRF |
+| № | Критичность | Название | Приложение |
+|---|-------------|----------|------------|
+| 1 | <font color="red">**Высокая**</font> | **Уязвимости Denial of Service, Command Injection ([A05:2021-Security Misconfiguration](https://owasp.org/Top10/A05_2021-Security_Misconfiguration/), [A03:2021-Injection](https://owasp.org/Top10/A03_2021-Injection/))** | Оба приложения |
+| 2 | <font color="red">**Высокая**</font> | **Уязвимость [Path Traversal](https://owasp.org/www-community/attacks/Path_Traversal) ([A01:2021-Broken Access Control](https://owasp.org/Top10/A01_2021-Broken_Access_Control/))** | Оба приложения |
+| 3 | <font color="red">**Высокая**</font> | **Уязвимость [Unrestricted File Upload](https://owasp.org/www-community/vulnerabilities/Unrestricted_File_Upload). ([A03:2021-Injection](https://owasp.org/Top10/A03_2021-Injection/))** | Оба приложения |
+| 4 | <font color="red">**Высокая**</font> | **Уязвимость [SQL Injection](https://owasp.org/www-community/attacks/SQL_Injection) ([A03:2021-Injection](https://owasp.org/Top10/A03_2021-Injection/))** | Оба приложения |
+| 5 | <font color="red">**Высокая**</font> | **Слабый пароль администратора ([A07:2021-Identification and Authentication Failures](https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/))** | NetologyVulnApp |
+| 6 | <font color="orange">**Средняя**</font> | **Использование чужой сессии. ([A07:2021-Identification and Authentication Failures](https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/))** | NetologyVulnApp |
+| 7 | <font color="orange">**Средняя**</font> | **Уязвимость к XSS атакам ([A03:2021-Injection](https://owasp.org/Top10/A03_2021-Injection/), [Stored XSS](https://owasp.org/www-community/attacks/xss/#stored-xss-attacks))** | Оба приложения |
+| 8 | <font color="orange">**Средняя**</font> | **Уязвимость к BruteForce атакам. ([A07:2021-Identification and Authentication Failures](https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/))** | Оба приложения |
+| 9 | <font color="orange">**Средняя**</font> | **Отсутствие защиты от атак типа Сlickjacking, XSRF. ([A01:2021-Broken Access Control](https://owasp.org/Top10/A01_2021-Broken_Access_Control/))** | Оба приложения |
 
-В первую очередь рекомендованы к устранению уязвимости с `Высокой` уровнем критичности.
+На тестируемом сервисе `NetologyVulnApp` есть функционал добавления в корзину картинок и покупки. Средством монетизации сайта вероятно является именно посредничество при покупке и продаже, соответственно простой сайта на неопределенное время, использование чужой сессии для покупок, кража базы данных и добавление товара в чужую корзину является серьезным риском потери прибыли и репутации.  
+На другом тестируемом сервисе `Beemer` есть функционал проверки доступности сервера по IP и я так понимаю блог про автомобили. Тут средством монетизации веротно будет реклама.  
+В любом случае, помимо издержек от остановки сайта, компания может стать жертвой шпионажа или майнеров криптовалюты, которые будут использовать мощности сервера.  
+
+В первую очередь рекомендованы к устранению уязвимости с `Высокой` уровнем критичности.  
 Для устранения уязвимостей и профилактики появления новых уязвимостей рекомендуется:
 - Оценить уровень компании по OWASP SAMM
 - Проверить процессы разработки ПО по `ГОСТ Р ИСО/МЭК 12207-2010`
@@ -253,7 +258,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 </details>
 
 <details>
-<summary>Результаты сканирования Nikto</summary>
+<summary>Результаты сканирования Nikto (http://92.51.39.106:8060)</summary>
 
 ```sh
 nikto -h http://92.51.39.106:8060 -Pause 2 -timeout 3 -T 12350bde
@@ -290,7 +295,33 @@ nikto -h http://92.51.39.106:8060 -Pause 2 -timeout 3 -T 12350bde
 </details>
 
 <details>
-<summary>Результаты сканирования DirSearch</summary>
+<summary>Результаты сканирования Nikto (http://92.51.39.106:7799)</summary>
+
+```sh
+$ nikto -h http://92.51.39.106:7799 -Pause 2 -timeout 3 -T 12350bde
+-***** Pausing 2 second(s) per request
+- Nikto v2.5.0
+---------------------------------------------------------------------------
++ Target IP:          92.51.39.106
++ Target Hostname:    92.51.39.106
++ Target Port:        7799
++ Start Time:         2023-10-20 15:43:24 (GMT3)
+---------------------------------------------------------------------------
++ Server: TornadoServer/5.1.1
++ /: The anti-clickjacking X-Frame-Options header is not present. See: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
++ /: The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type. See: https://www.netsparker.com/web-vulnerability-scanner/vulnerabilities/missing-content-type-header/
++ No CGI Directories found (use '-C all' to force check all possible dirs)
++ /login.html: Admin login page/section found.
++ 4724 requests: 0 error(s) and 3 item(s) reported on remote host
++ End Time:           2023-10-20 18:25:50 (GMT3) (9746 seconds)
+---------------------------------------------------------------------------
++ 1 host(s) tested
+```
+
+</details>
+
+<details>
+<summary>Результаты сканирования DirSearch (http://92.51.39.106:8060)</summary>
 
 ```sh
 $ dirsearch -u http://92.51.39.106:8060 --cookie="PHPSESSID=2vk27akqfvv4h1sgc9kjin6db7"
@@ -382,6 +413,36 @@ Task Completed
 
 </details>
 
+<details>
+<summary>Результаты сканирования DirSearch (http://92.51.39.106:8060)</summary>
+
+```sh
+─$ dirsearch -u http://92.51.39.106:7799
+
+  _|. _ _  _  _  _ _|_    v0.4.2
+ (_||| _) (/_(_|| (_| )
+
+Extensions: php, aspx, jsp, html, js | HTTP method: GET | Threads: 30 | Wordlist size: 10927
+
+Output File: /home/qwuen/.dirsearch/reports/92.51.39.106-7799/_23-10-20_20-13-35.txt
+
+Error Log: /home/qwuen/.dirsearch/logs/errors-23-10-20_20-13-35.log
+
+Target: http://92.51.39.106:7799/
+
+[20:13:35] Starting:
+[20:13:56] 200 -   15KB - /index.html
+[20:13:58] 200 -    5KB - /login.html
+[20:14:06] 200 -    3KB - /search
+[20:14:08] 500 -  324B  - /static/dump.sql
+[20:14:10] 405 -  325B  - /upload
+
+Task Completed
+```
+
+</details>
+
+
 #### По результатам сканирования можно выделить следующие проблемы:
 - Проблема сессии приложения
     - Нет привязки сессии к устройству 
@@ -411,7 +472,11 @@ Task Completed
 - Cookie без атрибута SameSite, HttpOnly, Strict-Transport-Security
 - Заголовок X-Content-Type-Options отсутствует
 
+**Результат сканирования NetologyVulnApp**:  
 ![](pic/owasp-zap-report.png)  
+
+**Результат сканирования Beemer**:  
+![](pic/owasp-zap-report-1.png)
 
 ### Используемые инструменты:
 - OWASP ZAP
@@ -435,265 +500,7 @@ Task Completed
 
 ## Этап 4. Создание отчёта
 
-### Результаты тестирования
-#### 1. **Уязвимости Denial of Service, Command Injection** ([A05:2021-Security Misconfiguration](https://owasp.org/Top10/A05_2021-Security_Misconfiguration/), [A03:2021-Injection](https://owasp.org/Top10/A03_2021-Injection/))
-**Критичность:** <font color="red">**Высокая**</font>  
-**Страница**: `http://92.51.39.106:8060/passcheck.php`  
-**Описание**: На странице есть возможность проверить надежность пароля. При этом пароль проверяется по файлу паролей в операционной системе. Для чтения файла используется метод PHP `exec` с использованием пользовательского ввода в сыром ввиде. 
-```php
-$pass = $_GET["password"];
-exec("/bin/cat /usr/share/dict/words | grep " . $pass, $output, $status);
-```
-
-**Предложения по исправлению**:  
- - Не использовать опасные методы PHP по взаимодействию с ОС
- - Использовать санитизацию и экранирование пользовательского ввода
-
-<details>
-<summary>Подробности реализации</summary>
-
-- Заходим на исследуемую страницу и вводим в поле ввода `Password to check` любой пароль. После проверки пароля система отображает используемую shell-команду в интерфейсе.  
-Используется следующий шаблон:  
-`grep ^UserInput$ /etc/dictionaries-common/words`  
-
-![](pic/dos.png)  
-- Попробуем повлиять на команду и введем один из спец. символов `&, &&, |, ||` для образования `pipeline` (конвейера) команд.  
-```sh
-test | whoami
-```
-![](pic/dos-example.png)  
-
-- После отправки запроса на сервер сайт будет недоступен какое-то время, что является отказом в обслуживании. (Denial of Service)
-
-</details>
-
----
-
-#### 2. **Наличие [SQL Injection](https://owasp.org/www-community/attacks/SQL_Injection) уязвимости на странице ([A03:2021-Injection](https://owasp.org/Top10/A03_2021-Injection/))**  
-**Критичность:** <font color="red">**Высокая**</font>  
-**Страница**: `http://92.51.39.106:8060/users/login.php`  
-**Описание**:  
-- Через форму авторизации пользователей есть возможность внедрить sql скрипт в поле логина.
-
-Существует возможность выполнения следующих действий:  
-- Добавление, изменение данных в таблицах 
-- Удаление данных из таблиц
-- Нарушение схемы БД 
-
-**Предложения по исправлению**:  
-- Добавить валидацию, санитизацию входных данных с формы 
-
-<details>
-<summary>Подробности реализации</summary>
-
-1. Перейти на страницу `http://92.51.39.106:8060/users/login.php` и в форме авторизации в поле логина использовать следующий вектор атаки:  
-```
-' OR 1 -- -
-```
-![](pic/sqli-example.png)
-
-2. Запрос выполнился корректно.  
-Мы успешно авторизовываемся по пользователем `Sample User`   
-
-Проблема находится в данном участке кода
-```php
- function check_login($username, $pass, $vuln = False)
-   {
-      if ($vuln)
-      {
-	 $query = sprintf("SELECT * from `users` where `login` like '%s' and `password` = SHA1( CONCAT('%s', `salt`)) limit 1;",
-	                   $username,
-	                   mysql_real_escape_string($pass));	 
-      }
-      else
-      {
-	 $query = sprintf("SELECT * from `users` where `login` like '%s' and `password` = SHA1( CONCAT('%s', `salt`)) limit 1;",
-	                   mysql_real_escape_string($username),
-	                   mysql_real_escape_string($pass));
-      }
-      $res = mysql_query($query);
-```
-Метод `mysql_real_escape_string` не вызывается для параметра `$username`.
-
-</details>
-
----
-
-#### 3. **Слабый пароль администратора ([A07:2021-Identification and Authentication Failures](https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/))**  
-**Критичность:** <font color="orange">**Средняя**</font>    
-**Страница**: `http://92.51.39.106:8060/admin/index.php?page=login`  
-**Описание**:  
-- На странице авторизации администратора сайта используется слабый пароль `admin/admin`
-
-Существует возможность получить несанкционированный доступ к административной консоли. Уязвимость со средней критичностью, т.к. текущая функциональность административной консоли небольшая, но в будущем может быть расширена. 
-
-**Предложения по исправлению**:  
-- Использовать сложный пароль
-- Ввести ограничение на количество попыток авторизации
-
-<details>
-<summary> Подробности реализации</summary>
-
-1. Перейти на страницу `http://92.51.39.106:8060/admin/index.php?page=login` и форме авторизации пользователя ввести логин/пароль: 
-`admin/admin`
-
-![](pic/weak-password-test.png)
-![](pic/weak-password.png)
-</details>
-
----
-
-#### 4. **Использование чужой сессии. ([A07:2021-Identification and Authentication Failures](https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/))**  
-**Критичность:** <font color="orange">**Средняя**</font>  
-**Описание**:   
-Есть возможность скопировать сессионную куку пользователя из одного браузера в другой и продолжить работать в обоих браузерах.   
-Существует возможность выполнения следующих действий:  
-- Кражи пользовательской куки
-- Реализация XSS атаки  
-
-**Предложения по исправлению**:  
- - Сделать привязку сессионной куки пользователя к устройству(браузеру)
- - Установить время жизни сессии пользователя в период бездействия
-
-<details>
-<summary>Подробности реализации</summary>
-
-- Заходим пользователем `test` на страницу `http://92.51.39.106:8060/guestbook.php` с существующей хранимой XSS. Получаем сообщение с текущими значениями куки пользователя  
-![](pic/stored-xss-session.png)  
-
-- Копируем сессионную куку `PHPSESSID` в другой браузер и обновляем страницу. После обновления приложение не будет требовать авторизации и будет отображено имя пользователя `Test`
-![](pic/use-session-value.png)  
-
-</details>
----
-
-#### 5. **Уязвимость [Path Traversal](https://owasp.org/www-community/attacks/Path_Traversal) ([A01:2021-Broken Access Control](https://owasp.org/Top10/A01_2021-Broken_Access_Control/))**   
-**Критичность:** <font color="orange">**Средняя**</font>  
-**Страница**: `http://92.51.39.106:8060/admin/index.php?page=login`  
-**Описание**: Существует возможность обращения к файловой системе через параметр GET запроса  
-**Предложения по исправлению**:  
- - Валидация значений параметров запросов
-
-<details>
-<summary>Подробности реализации</summary>
-
-1. Перейти на страницу `http://92.51.39.106:8060/admin/index.php?page=login`  
-2. В параметре `page` использовать следующий вектор атаки:  
-```
-page=php://filter/read=convert.base64-encode/resource=../users/check_pass
-```
-В ответ получаем код запрошенной страницы в base64  
-![](pic/path-traversal-test.png)
-3. Декодируем строку и получаем код страницы  
-![](pic/path-traversal.png)
-
-</details>
-
----
-
-#### 6. **Уязвимость к XSS атакам** ([A03:2021-Injection](https://owasp.org/Top10/A03_2021-Injection/), [Stored XSS](https://owasp.org/www-community/attacks/xss/#stored-xss-attacks))  
-**Критичность:** <font color="orange">**Средняя**</font>  
-**Страницы**:  
-- `http://92.51.39.106:8060/piccheck.php`  
-- `http://92.51.39.106:8060/pictures/search.php?query=`
-- `http://92.51.39.106:8060/guestbook.php`  
-
-**Payload**: `#"><img src=/ onerror=alert(document.cookie)>`
-**Описание**: На нескольких страницах происходит добавление пользовательского ввода на страницу без санитизации и экранирования     
-Существует возможность выполнения следующих действий:  
-- Кража сессионной куки
-- Перенаправление пользователей на сторонние сайты
-- Выполнение XSRF атак на другие сайты в этой страницы  
-
-**Предложения по исправлению**:  
-- Добавить валидацию/санитизацию пользовательского ввода    
-
-<details>
-<summary>Подробности реализации</summary>
-
-1. Заходим на стартовую страницу `http://92.51.39.106:8060/`, заполнить уязвимое поле `With this name` и нажать `Send file`  
-
-![](pic/reflected-xss-index.png)  
-Далее мы будем перенаправлены на уязвимую страницу `http://92.51.39.106:8060/piccheck.php`  
-
-![](pic/reflected-xss.png)  
-
-2. Заходим на любую страницу содержащую поисковое поле, например `http://92.51.39.106:8060/pictures/search.php?query=`.  
-Используем полигон для тестирования XSS.  
-
-![](pic/reflected-xss-search.png)  
-
-3. Заходим на любую страницу `http://92.51.39.106:8060/guestbook.php` и заполням поля `Name` и `Comment`.  
-
-![](pic/stored-xss-test.png)  
-
-Используем полигон для тестирования XSS.  
-
-![](pic/stored-xss.png)  
-
-</details>
-
-----
-
-#### 7. **Отсутствие защиты от BruteForce атак. ([A07:2021-Identification and Authentication Failures](https://owasp.org/Top10/A07_2021-Identification_and_Authentication_Failures/))**    
-**Критичность:** <font color="orange">**Средняя**</font>  
-**Страница**: `http://92.51.39.106:8060/users/login.php`  
-**Описание**: При авторизации в приложении нет ограничений на количество попыток ввода паролей пользователей, что открывает возможность к перебору пароля от известного пользователя или подбору комбинации логина и пароля.    
-Существует возможность выполнения следующих действий:  
-- Подбор пароля методом "грубой силы"  
-
-**Предложения по исправлению**:  
- - Установить ограничение попыток ввода пароля
- - Установить ограничение попыток авторизации по IP-адресу
-
-<details>
-<summary>Подробности реализации</summary>
-
-Для упрощения задачи используем заданее известный логин пользователя `test`. 
-
-```
-hydra -l test -P "/usr/share/wordlists/rockyou.txt" -s 8060 92.51.39.106 http-post-form "/users/login.php:username=t
-est&password=^PASS^:F=The username/password combination you have entered is invalid" -f -v
-```
-
-![](pic/hydra-scan.png)
-
-</details>
-
-----
-
-#### 8. **Отсутствие защиты от атак типа Сlickjacking, XSRF. ([A01:2021-Broken Access Control](https://owasp.org/Top10/A01_2021-Broken_Access_Control/))**    
-**Критичность:** <font color="orange">**Средняя**</font>  
-**Страница**: `http://92.51.39.106:8060/cart/action.php?action=add&picid=11`    
-**Описание**:   
-Уязвимость позволяет заставить пользователя, который находится на одном сайте выполнять действия на другом сайте. Это работает за счет отправки от имени пользователя запросов на другой сайт, где у пользователя есть активная сессия. Целевой сайт будет получать сессионные куки пользователя, проводить идентификацию и выполнять запрос от имени пользователя. В случае атаки `Сlickjacking` сущетвует возможность открыть целевой сайт в `iframe` и отобразить поверх своего сайта с прозрачным фоном. Пользователь будет работать с одним сайтом и тем временем наживать реальные кнопки в `iframe` и выполнять действия на другом сайте.  
-Существует возможность выполнения следующих действий:  
-- Загрузка сайта в iframe 
-- Отправка запросов на другой сайт вместе с сессионными куками  
-
-**Предложения по исправлению**:  
- - Установить флаг сессионной куки `SameSite:"Strict"`
- - Установить заголовок `X-Frame-Options: SAMEORIGIN` или `DENY`  
- `DENY`- Никогда не показывать страницу внутри фрейма.  
- `SAMEORIGIN` - Разрешить открытие страницы внутри фрейма только в том случае, если родительский документ имеет тот же источник.
-- Добавить csrf токены на страницы и производить проверку токена при осуществлении действий на странице.  
-
-<details>
-<summary>Подробности реализации</summary>
-
-- Создаем страницу с подготовленной формой и `iframe` с целевым сайтом  
-
-```
-<a href="http://92.51.39.106:8060/cart/action.php?action=add&picid=11">Add to card</a>
-<br>
-   
-<iframe width="1000px" height="1000px" src="http://92.51.39.106:8060"></iframe>
-```
-- Пользователь нажимает кнопку `Add to card` и тем временем выполняет запрос на добавление элемента в карзину на другом сайте.
-
-![](pic/fake-site.png)  
-
-![](pic/csrf-example.png)
-
-</details>
+Ниже представлены ссылки на подробное описание и примеры реализации уязвимостей.  
+- [**NetologyVulnApp**](/Report_1.md)
+- [**Beemer**](/Report_2.md)
 
